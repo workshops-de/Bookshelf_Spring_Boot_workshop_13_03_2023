@@ -57,6 +57,12 @@ public class BookRestController {
         return bookService.findBooks(searchRequest);
     }
 
+    @PostMapping
+    ResponseEntity<Book> addToShelf(@Valid Book newBook) {
+        var savedBook = bookService.addBook(newBook);
+        return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
+    }
+
     @ExceptionHandler(BookException.class)
     ResponseEntity<String> handleBookException(BookException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.I_AM_A_TEAPOT);

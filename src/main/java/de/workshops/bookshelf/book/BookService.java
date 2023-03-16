@@ -40,4 +40,11 @@ class BookService {
                         || book.getTitle().startsWith(searchRequest.title()))
                 .toList();
     }
+
+    Book addBook(Book newBook) {
+        if (getBookByIsbn(newBook.getIsbn()) != null) {
+            throw new BookException("Dieses Buch steht schon im Regal");
+        }
+        return bookRepository.saveBook(newBook);
+    }
 }
