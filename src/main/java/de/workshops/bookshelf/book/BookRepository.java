@@ -1,38 +1,45 @@
 package de.workshops.bookshelf.book;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
 import java.util.List;
 
 @Repository
 class BookRepository {
-    private final ObjectMapper mapper;
-    private final ResourceLoader resourceLoader;
 
-    private List<Book> books;
+    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public BookRepository(ObjectMapper mapper, ResourceLoader resourceLoader) {
-        this.mapper = mapper;
-        this.resourceLoader = resourceLoader;
-    }
-
-    @PostConstruct
-    void initBookList() throws IOException {
-        final var resource = resourceLoader.getResource("classpath:books.json");
-        books = mapper.readValue(resource.getInputStream(), new TypeReference<>() {});
+    BookRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     List<Book> findAllBooks() {
+        String sql = "select * from book";
+        var books = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Book.class));
         return books;
     }
 
     Book saveBook(Book book) {
-        books.add(book);
+        String sql = "INSERT INTO book (isbn, title, author, description) VALUES (?, ?, ?, ?)";
+        final var update = jdbcTemplate.update(sql, book.getId(), book.getTitle(), book.getAuthor(), book.getDescription());
+        return book;
+    }
+
+    Book saveBookWithNamedQuery(Book book) {
+        String sql = "INSERT INTO book (isbn, title, author, description) VALUES (:isbn, :title, :author, :description)";
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("isbn", book.getIsbn())
+                .addValue("title", book.getTitle())
+                .addValue("author", book.getAuthor())
+                .addValue("description", book.getDescription());
+        final var update = namedParameterJdbcTemplate.update(sql, namedParameters);
         return book;
     }
 }
