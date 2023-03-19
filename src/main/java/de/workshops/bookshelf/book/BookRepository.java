@@ -20,13 +20,13 @@ class BookRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    List<Book> findAllBooks() {
+    List<Book> findAll() {
         String sql = "select * from book";
         var books = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Book.class));
         return books;
     }
 
-    Book saveBook(Book book) {
+    Book save(Book book) {
         String sql = "INSERT INTO book (isbn, title, author, description) VALUES (?, ?, ?, ?)";
         final var update = jdbcTemplate.update(sql, book.getId(), book.getTitle(), book.getAuthor(), book.getDescription());
         return book;

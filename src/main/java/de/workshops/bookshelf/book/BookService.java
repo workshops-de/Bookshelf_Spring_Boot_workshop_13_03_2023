@@ -7,18 +7,18 @@ import java.util.List;
 @Service
 class BookService {
 
-    private final BookRepository bookRepository;
+    private final BookJpaRepository bookRepository;
 
-    BookService(BookRepository bookRepository) {
+    BookService(BookJpaRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
     List<Book> getAllBooks() {
-        return bookRepository.findAllBooks();
+        return bookRepository.findAll();
     }
 
     Book getBookByIsbn(String isbn) {
-        final var books = bookRepository.findAllBooks();
+        final var books = bookRepository.findAll();
         return books.stream()
                 .filter(b -> b.getIsbn().equals(isbn))
                 .findFirst()
@@ -26,7 +26,7 @@ class BookService {
     }
 
     Book getByAuthor(String authorName) {
-        final var books = bookRepository.findAllBooks();
+        final var books = bookRepository.findAll();
         return books.stream()
                 .filter(book -> book.getAuthor().startsWith(authorName))
                 .findFirst()
@@ -34,7 +34,7 @@ class BookService {
     }
 
     List<Book> findBooks(BookSearchRequest searchRequest) {
-        final var books = bookRepository.findAllBooks();
+        final var books = bookRepository.findAll();
         return books.stream()
                 .filter(book -> book.getAuthor().startsWith(searchRequest.author())
                         || book.getTitle().startsWith(searchRequest.title()))
@@ -45,6 +45,6 @@ class BookService {
         if (getBookByIsbn(newBook.getIsbn()) != null) {
             throw new BookException("Dieses Buch steht schon im Regal");
         }
-        return bookRepository.saveBook(newBook);
+        return bookRepository.save(newBook);
     }
 }

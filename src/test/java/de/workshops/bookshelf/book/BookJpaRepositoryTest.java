@@ -4,21 +4,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//@DataJpaTest(includeFilters = @ComponentScan.Filter(
-//        type = FilterType.ANNOTATION,
-//        classes = Repository.class
-//))
 @DataJpaTest
-@Import(BookRepository.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class BookRepositoryTest {
+class BookJpaRepositoryTest {
 
     @Autowired
-    private BookRepository repository;
+    private BookJpaRepository repository;
 
     @Test
     void shouldFindAllBooks() {
