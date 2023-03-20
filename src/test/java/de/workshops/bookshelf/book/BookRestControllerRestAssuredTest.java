@@ -30,7 +30,10 @@ class BookRestControllerRestAssuredTest {
     @Test
     void shouldGetAllBooks() {
         LOGGER.info("shouldGetAllBooks Port {}", RestAssured.port);
-        final var allBooks = RestAssured.when().get("/book")
+        final var allBooks = RestAssured
+                .given()
+                .auth().basic("dbUser", "password")
+                .when().get("/book")
                 .then().statusCode(HttpStatus.OK.value())
                 .extract().body().as(new TypeRef<List<Book>>() {});
 
@@ -42,7 +45,10 @@ class BookRestControllerRestAssuredTest {
     @Test
     void shouldGetByIsbn() {
         LOGGER.info("shouldGetByIsbn Port {}", port);
-        final var book = RestAssured.when().get("/book/978-3826655487")
+        final var book = RestAssured
+                .given()
+                .auth().basic("dbUser", "password")
+                .when().get("/book/978-3826655487")
                 .then().statusCode(HttpStatus.OK.value())
                 .extract().body().as(new TypeRef<Book>() {});
 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -29,6 +30,7 @@ class BookRestControllerMockMVCTest {
     ObjectMapper mapper;
 
     @Test
+    @WithMockUser
     void shouldGetAllBooks_testWithJsonPath() throws Exception {
         // use static imports
         mockMvc.perform(get("/book"))
@@ -39,6 +41,7 @@ class BookRestControllerMockMVCTest {
     }
 
     @Test
+    @WithMockUser
     void shouldGetAllBooks_testWithMVCResult() throws Exception {
         // use static imports
         final var mvcResult = mockMvc.perform(get("/book"))

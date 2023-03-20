@@ -5,7 +5,10 @@ import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/book")
 @Validated
+@CrossOrigin()
 public class BookRestController {
 
     private final BookService bookService;
@@ -58,6 +62,7 @@ public class BookRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<Book> addToShelf(@Valid Book newBook) {
         var savedBook = bookService.addBook(newBook);
         return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
